@@ -6,7 +6,7 @@ $pass = getenv('MYSQLPASSWORD') ?: "";
 $db   = getenv('MYSQLDATABASE') ?: "presensi_gps";
 $port = getenv('MYSQLPORT') ?: "3306";
 
-$conn = new mysqli($host, $user, $pass, $db, $port);
+$conn = new mysqli($host, $user, $pass, $db, (int)$port);
 
 if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
@@ -34,7 +34,7 @@ $conn->query("CREATE TABLE IF NOT EXISTS users (
 
 // Buat akun admin default jika belum ada
 $cekAdmin = $conn->query("SELECT id FROM users WHERE username='admin' LIMIT 1");
-if ($cekAdmin->num_rows === 0) {
+if ($cekAdmin && $cekAdmin->num_rows === 0) {
     $hashAdmin = password_hash('admin123', PASSWORD_BCRYPT);
     $conn->query("INSERT INTO users (nama, username, password, role) VALUES ('Administrator', 'admin', '$hashAdmin', 'admin')");
 }
